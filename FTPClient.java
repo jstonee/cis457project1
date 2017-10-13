@@ -1,69 +1,66 @@
-import java.io.*; 
 import java.net.*;
+import java.io.*;
 import java.util.*;
 import java.text.*;
 import java.lang.*;
-import javax.swing.*;
-class FTPClient { 
 
-    public static void main(String argv[]) throws Exception 
-    { 
-        String sentence; 
-        String modifiedSentence; 
-        boolean isOpen = true;
-        int number=1;
-        boolean notEnd = true;
-	String statusCode;
-	boolean clientgo = true;
-	    
+
+public class FTPClient { 
+    private static Socket ControlSocket;
+    public static void main(String argv[]) throws Exception {
+	String input;
+	System.out.println("Type connect <ip> <port>");
+
+	BufferedReader inFromUser = new BufferedReader(new InputStreamReader(System.in));
+	System.out.print("Enter a command: ");
+	input = inFromUser.readLine();
+	StringTokenizer tokens = new StringTokenizer(input);
+
+	if(input.startsWith("connect")) {
+	    String serverName = tokens.nextToken(); // connect
+	    serverName = tokens.nextToken(); // serverIP
+	    int port = Integer.parseInt(tokens.nextToken()); // port
+	    System.out.println("Connecting to " + serverName + ":" +  port);
+	    try { 
+		ControlSocket = new Socket(serverName, port);
+	    } catch (IOException ioEx) {
+		System.out.println("Unable to connect to " + serverName + ":" + port);
+		System.exit(1);
+	    }
+	    while(true) {
+		DataOutputStream toServer = new DataOutputStream(ControlSocket.getOutputStream());
+		DataInputStream fromServer = new DataInputStream(new BufferedInputStream(ControlSocket.getInputStream()));
+		System.out.print("Enter a command: ");
+		input = inFromUser.readLine();
+		
+		if(input.equals("list:")) {
+		    int port1 = port + 2;
+		    ServerSocket welcomeData = new ServerSocket(port1);
+		    toServer.writeBytes(port1 + " " + input + " " + '\n');
+
+		    Socket dataSocket = welcomeData.accept();
+		    System.out.println("Server sending list data");
+		    DataInputStream inData = new DataInputStream(new BufferedInputStream(dataSocket.getInputStream()));
+		    
+		    dataSocket.close();
+		}
+		else if (input.equals("quit:")) {
+		    System.out.println("Closing Control Socket");
+		    toServer.writeBytes("quit:");
+		    ControlSocket.close();
+		    System.out.println("Exiting");
+		    System.exit(0);
+		}
+		else {
+		    System.out.println("Invalid command");
+		}
+	    }
+
+	}
+	else {
+	    System.out.println("You must connect to a server");
+	    System.exit(1);
+	}
 	
-	BufferedReader inFromUser = 
-        new BufferedReader(new InputStreamReader(System.in)); 
-        sentence = inFromUser.readLine();
-        StringTokenizer tokens = new StringTokenizer(sentence);
-
-
-	if(sentence.startsWith("connect")){
-	String serverName = tokens.nextToken(); // pass the connect command
-	serverName = tokens.nextToken();
-	port1 = Integer.parseInt(tokens.nextToken());
-        System.out.println("You are connected to " + serverName);
-        
-	Socket ControlSocket= new Socket(serverName, port1);
-        
-	while(isOpen && clientgo)
-        {      
-	      
-          DataOutputStream outToServer = 
-          new DataOutputStream(ControlSocket.getOutputStream()); 
-          
-	  DataInputStream inFromServer = new DataInputStream(new BufferedInputStream             (ControlSocket.getInputStream()));
-          
-    	  sentence = inFromUser.readLine();
-	   
-        if(sentence.equals("list:"))
-        {
-            
-	    port = port +2;
-	    System.out.println(port);
-	    ServerSocket welcomeData = new ServerSocket(port);
-    	    outToServer.writeBytes (port + " " + sentence + " " + '\n');
-
-	    Socket dataSocket =welcomeData.accept(); 
- 	    DataInputStream inData = new DataInputStream(new BufferedInputStream 					(dataSocket.getInputStream()));
-            while(notEnd) 
-            {
-                modifiedSentence = inData.readUTF();
-               ........................................
-	       ........................................
-            }
-	
-
-	 welcomeData.close();
-	 dataSocket.close();
-	 System.out.println("\nWhat would you like to do next: \n retr: file.txt ||  				stor: file.txt  || close");
-
-        }
-         else if(sentence.startsWith("retr: "))
-        {
-		....................................................
+    }
+}
