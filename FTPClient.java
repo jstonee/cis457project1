@@ -44,9 +44,21 @@ public class FTPClient {
 		    
 		    dataSocket.close();
 		}
+		else if(input.startsWith("retr")) {
+		    tokens = new StringTokenizer(input);
+		    String file = tokens.nextToken();
+		    file = tokens.nextToken();
+		    System.out.println("Requesting " + file + " from server");
+		}
+		else if(input.startsWith("stor")) {
+		    tokens = new StringTokenizer(input);
+		    String file = tokens.nextToken();
+		    file = tokens.nextToken();
+		    System.out.println("Storing " + file + " from server");
+		}
 		else if (input.equals("quit:")) {
 		    System.out.println("Closing Control Socket");
-		    toServer.writeBytes("quit:");
+		    toServer.writeBytes("quit:" + " " + '\n');
 		    ControlSocket.close();
 		    System.out.println("Exiting");
 		    System.exit(0);
