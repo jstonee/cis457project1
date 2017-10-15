@@ -31,7 +31,7 @@ public class FTPClient {
             while (true) {
                 DataOutputStream toServer = new DataOutputStream(ControlSocket.getOutputStream());
                 DataInputStream fromServer = new DataInputStream(new BufferedInputStream(ControlSocket.getInputStream()));
-                System.out.print("Enter a command: ");
+                System.out.print("\nEnter a command: ");
                 input = inFromUser.readLine();
 
                 if (input.equals("list:")) {
@@ -40,8 +40,14 @@ public class FTPClient {
                     toServer.writeBytes(port1 + " " + input + " " + '\n');
 
                     Socket dataSocket = welcomeData.accept();
-                    System.out.println("Server sending list data");
-                    DataInputStream inData = new DataInputStream(new BufferedInputStream(dataSocket.getInputStream()));
+                    System.out.println("\nThe files on this server are:");
+                    BufferedReader inData = new BufferedReader(new InputStreamReader(new BufferedInputStream(dataSocket.getInputStream())));
+
+                    String dataFromServer = inData.readLine();
+                    while(dataFromServer != null) {
+                        System.out.println(dataFromServer);
+                        dataFromServer = inData.readLine();
+                    }
 
                     dataSocket.close();
                 } else if (input.startsWith("retr")) {

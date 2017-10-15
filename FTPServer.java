@@ -67,30 +67,28 @@ class ClientHandler extends Thread {
 				return;
 			}
 
-//			try {
-//				if (clientCommand.equals("list:")) {
-//					Socket dataSocket = new Socket(clientSocket.getInetAddress(), port);
-//					System.out.println("Data Socket opened.");
-//					DataOutputStream dataOutToClient = new DataOutputStream(dataSocket.getOutputStream());
-//					File folder = new File(".");
-//					File[] listOfFiles = folder.listFiles();
-//					String temp;
-//					for (int i = 0; i < listOfFiles.length; i++) {
-//						if (listOfFiles[i].isFile()) {
-//							//System.out.println("File " + listofFiles[i].getName());
-//							//data.parseByte(listOfFiles[i].getName());
-//							temp = listOfFiles[i].getName();
-//							data = temp.getBytes();
-//							dataOutToClient.write(data, 0, data.length);
-//						}
-//					}
-//					//dataOutToClient.write(data, 0, data.length);
-//					dataSocket.close();
-//					System.out.println("Data Socket closed.");
-//				}
-//			} catch (IOException ex) {
-//				ex.printStackTrace();
-//			}
+			try {
+				if (clientCommand.equals("list:")) {
+					// connect to client's Data Socket
+					Socket dataSocket = new Socket(clientSocket.getInetAddress(), port);
+					DataOutputStream dataOutToClient = new DataOutputStream(dataSocket.getOutputStream());
+					// get local files
+					File folder = new File(".");
+					File[] listOfFiles = folder.listFiles();
+					String temp;
+					// get data for each file
+					for (int i = 0; i < listOfFiles.length; i++) {
+						if (listOfFiles[i].isFile()) {
+							temp = listOfFiles[i].getName() + '\n';
+							data = temp.getBytes();
+							dataOutToClient.write(data, 0, data.length);
+						}
+					}
+					dataSocket.close();
+				}
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			}
 		} while (true);
 	}
 
