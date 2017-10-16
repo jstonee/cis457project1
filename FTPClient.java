@@ -13,7 +13,7 @@ public class FTPClient {
         System.out.println("Type connect <ip> <port>");
 
         BufferedReader inFromUser = new BufferedReader(new InputStreamReader(System.in));
-        System.out.print("Enter a command: ");
+        System.out.print("FTPClient >> ");
         input = inFromUser.readLine();
         StringTokenizer tokens = new StringTokenizer(input);
 
@@ -31,7 +31,7 @@ public class FTPClient {
             while (true) {
                 DataOutputStream toServer = new DataOutputStream(ControlSocket.getOutputStream());
                 DataInputStream fromServer = new DataInputStream(new BufferedInputStream(ControlSocket.getInputStream()));
-                System.out.print("\nEnter a command: ");
+                System.out.print("\nFTPClient >> ");
                 input = inFromUser.readLine();
 
                 if (input.equals("list:")) {
