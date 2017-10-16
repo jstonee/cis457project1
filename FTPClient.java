@@ -48,8 +48,9 @@ public class FTPClient {
                         System.out.println(dataFromServer);
                         dataFromServer = inData.readLine();
                     }
-
+		    inData.close();
                     dataSocket.close();
+		    welcomeData.close();
                 } else if (input.startsWith("retr")) {
                     tokens = new StringTokenizer(input);
                     String file = tokens.nextToken();
@@ -79,6 +80,7 @@ public class FTPClient {
 			in.close();
 			sendFile.close();
 			dataSocket.close();
+			welcomeData.close();
 		    }
 		    else {
 			System.out.println("File does not exist.");
