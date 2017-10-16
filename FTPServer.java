@@ -84,7 +84,22 @@ class ClientHandler extends Thread {
 							dataOutToClient.write(data, 0, data.length);
 						}
 					}
+					dataOutToClient.close();
 					dataSocket.close();
+				}
+				else if(clientCommand.equals("stor")) {
+				    clientCommand = tokens.nextToken();
+				    Socket dataSocket = new Socket(clientSocket.getInetAddress(), port);
+				    BufferedInputStream dataFromClient = new BufferedInputStream(new DataInputStream(dataSocket.getInputStream()));
+				    FileOutputStream file = new FileOutputStream(new File(clientCommand));
+				    byte[] buffer = new byte[8192];
+				    int count;
+				    while((count = dataFromClient.read(buffer)) > 0) {
+					file.write(buffer, 0, count);
+				    }
+				    file.close();
+				    dataFromClient.close();
+				    dataSocket.close();
 				}
 			} catch (IOException ex) {
 				ex.printStackTrace();
